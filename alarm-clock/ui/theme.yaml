@@ -1,0 +1,15 @@
+obj:
+  bg_color: ${background_color}
+  border_width: 0
+  text_color: 0xFFFFFF
+  radius: 0
+button:
+  bg_color: ${primary_color}
+  border_width: 0
+  border_color: ${primary_color}
+  text_color: 0x000
+  radius: 20
+  shadow_width: 0
+label:
+  disabled:
+    text_color: 0x4f6169

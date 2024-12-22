@@ -1,0 +1,22 @@
+widgets:
+  - obj:
+      align: CENTER
+      width: 100%
+      height: 100%
+      layout:
+        type: FLEX
+        flex_flow: COLUMN
+        flex_align_main: CENTER
+        flex_align_cross: CENTER
+        flex_align_track: CENTER
+      widgets:
+        - label:
+            id: home_clock
+            flex_grow: true
+            text: "..."
+            text_font: roboto_xl
+      
+        - label: 
+            id: alarm_time_text
+            flex_grow: true
+            text_font: roboto_lg

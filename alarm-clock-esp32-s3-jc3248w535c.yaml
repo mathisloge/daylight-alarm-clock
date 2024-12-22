@@ -1,0 +1,114 @@
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  name_add_mac_suffix: true
+  platformio_options:
+    board_build.flash_mode: dio
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    version: "5.3.1"
+    platform_version: 6.9.0
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  - type: quad
+    clk_pin: 47
+    data_pins: [21, 48, 40, 39]
+
+i2c:
+  - sda: 4
+    scl: 8
+
+i2s_audio:
+  i2s_lrclk_pin: 2
+  i2s_bclk_pin: 42
+
+speaker:
+  - platform: i2s_audio
+    id: speaker_main
+    dac_type: external
+    i2s_dout_pin: 41
+    sample_rate: 48000
+    channel: mono
+
+external_components:
+  - source: github://pr#7672
+    components:
+      - audio
+      - speaker
+      - i2s_audio
+      - media_player
+
+output:
+  - id: gpio_backlight_pwm
+    platform: ledc
+    pin: 1
+
+light:
+  - id: display_backlight
+    name: Backlight
+    platform: monochromatic
+    output: gpio_backlight_pwm
+    restore_mode: ALWAYS_ON
+
+  - platform: esp32_rmt_led_strip
+    id: daylight
+    rgb_order: GRB
+    pin: GPIO43
+    num_leds: 24
+    chipset: ws2812
+    name: "Light"
+    on_turn_on:
+      - lvgl.widget.update:
+          id: ui_daylight_state
+          state:
+            checked: true
+    on_turn_off:
+      - lvgl.widget.update:
+          id: ui_daylight_state
+          state:
+            checked: false
+
+display:
+  - id: main_display
+    platform: qspi_dbi
+    dimensions:
+      height: 480
+      width: 320
+    model: CUSTOM
+    data_rate: 40MHz
+    rotation: 90
+    cs_pin:
+      number: 45
+      ignore_strapping_warning: true
+    draw_from_origin: true
+    update_interval: never
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: main_touchscreen
+    platform: axs15231
+    transform:
+      swap_xy: true
+      mirror_x: true
+    on_release:
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - logger.log: "LVGL resuming"
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - light.turn_on: display_backlight
+
+packages:
+  core: !include alarm-clock/core.yaml
+  ui: !include alarm-clock/ui.yaml

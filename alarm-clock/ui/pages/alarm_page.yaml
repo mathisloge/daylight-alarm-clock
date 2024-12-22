@@ -1,0 +1,47 @@
+# widgets:
+- obj:
+    id: alarm_page
+    width: 100%
+    height: 100
+    align: BOTTOM_MID
+    bg_opa: COVER
+    radius: 0
+    pad_all: 0
+    border_width: 2
+    border_color: ${border_color}
+
+    layout:
+      type: FLEX
+      flex_flow: ROW
+      flex_align_main: CENTER
+      flex_align_cross: CENTER
+      pad_column: 30
+    widgets:
+      - button:
+          id: btn_snooze
+          radius: 180
+          height: 80
+          width: 80
+          align: CENTER
+          on_click:
+            - script.execute: do_snooze
+          widgets:
+            - label:
+                align: CENTER
+                text: "\U000F04B2"
+                text_font: mdi_lg
+
+      - button:
+          id: btn_turn_alarm_off
+          radius: 180
+          height: 80
+          width: 80
+          align: CENTER
+          on_click:
+            - script.execute: turn_off_alarm
+
+          widgets:
+            - label:
+                align: CENTER
+                text: "\U000F0023"
+                text_font: mdi_lg

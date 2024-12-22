@@ -1,0 +1,76 @@
+font: !include
+  file: ui/fonts/fonts.yaml
+
+script:
+  - id: go_home
+    then:
+      - lvgl.page.show: ${home_page}
+
+  - id: show_alarm_page
+    then:
+      - lvgl.widget.show: alarm_page
+
+  - id: hide_alarm_page
+    then:
+      - lvgl.widget.hide: alarm_page
+
+.sizing:
+  - &nav_widget_vars
+    height: 50px
+    padding: 8
+  - &page_styles
+    pad_top: 50px
+    pad_bottom: 50px
+
+
+lvgl:
+  default_font: roboto_md
+  theme: !include ui/theme.yaml
+  on_idle:
+    timeout: !lambda "return (id(display_timeout).state * 1000);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: display_backlight
+      - lvgl.pause:
+
+  top_layer:
+    widgets:
+      - <<: !include { file: ui/components/header/widget.yaml, vars: { <<: *nav_widget_vars } }
+      - <<: !include { file: ui/components/footer/widget.yaml, vars: { <<: *nav_widget_vars } }
+      - <<: !include { file: ui/components/boot_screen/widget.yaml }
+      - <<: !include { file: ui/pages/alarm_page.yaml }
+  pages:
+    - id: splash
+      skip: true
+      on_load:
+        - script.execute: go_home
+        - script.execute: hide_alarm_page
+
+    - id: home_screen
+      <<: *page_styles
+      <<: !include ui/pages/home_page.yaml
+      on_load:
+        - lvgl.label.update:
+            id: page_title
+            text: " "
+            
+    - id: alarm_settings_page
+      <<: *page_styles
+      <<: !include ui/pages/alarm_settings.page.yaml
+      on_load:
+        - lvgl.label.update:
+            id: page_title
+            text: "Weckereinstellungen"
+    
+    - id: daylight_settings_page
+      <<: *page_styles
+      <<: !include ui/pages/daylight_settings.page.yaml
+      on_load:
+        - lvgl.label.update:
+            id: page_title
+            text: "Lichteinstellungen"
+
+
+packages:
+  # boot screen
+  boot_screen_sensors: !include { file: ui/components/boot_screen/sensors.yaml }

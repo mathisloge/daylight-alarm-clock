@@ -1,0 +1,33 @@
+widgets:
+  - obj:
+      align: CENTER
+      width: 100%
+      height: 100%
+      layout:
+        type: FLEX
+        flex_flow: COLUMN
+        flex_align_main: CENTER
+        flex_align_cross: CENTER
+        flex_align_track: CENTER
+      widgets:
+        - switch:
+            id: ui_daylight_state
+            on_click:
+              - if:
+                  condition:
+                    lambda: 'return x;'
+                  then:
+                    - logger.log: "Turn on daylight"
+                    - light.turn_on: daylight
+                  else:
+                    - logger.log: "Turn off daylight"
+                    - light.turn_off: daylight
+        - arc:
+            id: ui_daylight_brightness
+            flex_grow: true
+            min_value: 0
+            max_value: 100
+            on_change:
+              - light.turn_on:
+                  id: daylight
+                  brightness: !lambda return int(x) / 100.f;

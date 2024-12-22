@@ -1,0 +1,113 @@
+widgets:
+  - obj:
+      align: CENTER
+      width: 100%
+      height: 100%
+      pad_all: 5
+      layout:
+        type: GRID
+        grid_columns: [FR(1), FR(1), FR(1)]
+        grid_rows: [FR(33), FR(33), FR(33)]
+
+      widgets:
+        - button:
+            id: ui_alarm_settings_alarm_hh_inc
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            on_click:
+              - datetime.time.set:
+                  id: next_alarm_datetime
+                  time: !lambda |-
+                    const auto current_hour = id(next_alarm_datetime).hour;
+                    const uint8_t new_hour = current_hour >= 23 ? 0 : static_cast<uint8_t>(current_hour + 1);
+                    return {.second = 0, .minute = id(next_alarm_datetime).minute, .hour = new_hour};
+            widgets:
+              - label:
+                  text_font: mdi_lg
+                  align: CENTER
+                  text: "\U000F0143"
+        - label:
+            id: ui_alarm_settings_hh_label
+            grid_cell_row_pos: 1
+            grid_cell_column_pos: 0
+            grid_cell_x_align: CENTER
+            grid_cell_y_align: CENTER
+        - button:
+            id: ui_alarm_settings_alarm_hh_dec
+            grid_cell_column_pos: 0
+            grid_cell_row_pos: 2
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            on_click:
+              - datetime.time.set:
+                  id: next_alarm_datetime
+                  time: !lambda |-
+                    const auto current_hour = id(next_alarm_datetime).hour;
+                    const uint8_t new_hour = current_hour == 0 ? 23 : static_cast<uint8_t>(current_hour - 1);
+                    return {.second = 0, .minute = id(next_alarm_datetime).minute, .hour = new_hour};
+            widgets:
+              - label:
+                  text_font: mdi_lg
+                  align: CENTER
+                  text: "\U000F0140"
+            
+        - label:
+            text: ":"
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 1
+            grid_cell_x_align: CENTER
+            grid_cell_y_align: CENTER
+        - switch:
+            id: ui_alarm_settings_alarm_active
+            grid_cell_column_pos: 1
+            grid_cell_row_pos: 2
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            on_click:
+              switch.toggle: alarm_active_switch
+
+        - button:
+            id: ui_alarm_settings_alarm_mm_inc
+            grid_cell_column_pos: 2
+            grid_cell_row_pos: 0
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            on_click:
+              - datetime.time.set:
+                  id: next_alarm_datetime
+                  time: !lambda |-
+                    const auto current_minute = id(next_alarm_datetime).minute;
+                    const uint8_t new_minute = current_minute >= 59 ? 0 : static_cast<uint8_t>(current_minute + 1);
+                    return {.second = 0, .minute = new_minute, .hour = id(next_alarm_datetime).hour};
+            widgets:
+              - label:
+                  text_font: mdi_lg
+                  align: CENTER
+                  text: "\U000F0143"
+        - label:
+            id: ui_alarm_settings_mm_label
+            align: CENTER
+            grid_cell_column_pos: 2
+            grid_cell_row_pos: 1
+            grid_cell_x_align: CENTER
+            grid_cell_y_align: CENTER
+        - button:
+            id: ui_alarm_settings_alarm_mm_dec
+            grid_cell_column_pos: 2
+            grid_cell_row_pos: 2
+            grid_cell_x_align: STRETCH
+            grid_cell_y_align: STRETCH
+            on_click:
+              - datetime.time.set:
+                  id: next_alarm_datetime
+                  time: !lambda |-
+                    const auto current_minute = id(next_alarm_datetime).minute;
+                    const uint8_t new_minute = current_minute == 0 ? 59 : static_cast<uint8_t>(current_minute - 1);
+                    return {.second = 0, .minute = new_minute, .hour = id(next_alarm_datetime).hour};
+            widgets:
+              - label:
+                  text_font: mdi_lg
+                  align: CENTER
+                  text: "\U000F0140"
