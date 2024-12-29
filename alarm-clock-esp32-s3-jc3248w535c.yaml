@@ -39,6 +39,13 @@ speaker:
     sample_rate: 48000
     channel: mono
 
+media_player:
+  - platform: speaker
+    id: media_player_main
+    name: "Media Player"
+    speaker: speaker_main
+    sample_rate: 48000
+
 external_components:
   - source: github://pr#7672
     components:
@@ -60,7 +67,7 @@ light:
     restore_mode: ALWAYS_ON
 
   - platform: esp32_rmt_led_strip
-    id: daylight
+    id: light_daylight
     rgb_order: GRB
     pin: GPIO43
     num_leds: 24
@@ -81,8 +88,8 @@ display:
   - id: main_display
     platform: qspi_dbi
     dimensions:
-      height: 480
       width: 320
+      height: 480
     model: CUSTOM
     data_rate: 40MHz
     rotation: 90
@@ -110,4 +117,5 @@ touchscreen:
 
 packages:
   core: !include alarm-clock/core.yaml
+  hardware: !include alarm-clock/hardware_core.yaml
   ui: !include alarm-clock/ui.yaml

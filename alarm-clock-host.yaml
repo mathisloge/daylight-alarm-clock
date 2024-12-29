@@ -1,0 +1,64 @@
+esphome:
+  name: daylight-alarm-clock-host
+
+host:
+
+substitutions:
+  name: "daylight-alarm-clock"
+  friendly_name: "Daylight alarm clock"
+  home_page: home_screen
+  background_color: "0x374E58"
+  border_color: "0x6a7a81"
+  primary_color: "0x2ec0ff"
+  text_sm: "16"
+  text_md: "20"
+  text_lg: "24"
+  text_xl: "64"
+  icons_sm: "20"
+  icons_md: "26"
+  icons_lg: "34"
+
+display:
+  - platform: sdl
+    auto_clear_enabled: false
+    dimensions:
+      width: 480
+      height: 320
+
+touchscreen:
+  platform: sdl
+
+packages:
+  core: !include alarm-clock/core.yaml
+  ui: !include alarm-clock/ui.yaml
+
+output:
+  - id: gpio_backlight_pwm
+    platform: template
+    type: float
+    write_action:
+      - logger.log: "Set some light"
+
+light:
+  - id: display_backlight
+    name: Backlight
+    platform: monochromatic
+    output: gpio_backlight_pwm
+    restore_mode: ALWAYS_ON
+
+  - platform: rgb
+    id: light_daylight
+    name: "Light"
+    red: gpio_backlight_pwm
+    green: gpio_backlight_pwm
+    blue: gpio_backlight_pwm
+    on_turn_on:
+      - lvgl.widget.update:
+          id: ui_daylight_state
+          state:
+            checked: true
+    on_turn_off:
+      - lvgl.widget.update:
+          id: ui_daylight_state
+          state:
+            checked: false

@@ -18,10 +18,10 @@ widgets:
                     lambda: 'return x;'
                   then:
                     - logger.log: "Turn on daylight"
-                    - light.turn_on: daylight
+                    - light.turn_on: light_daylight
                   else:
                     - logger.log: "Turn off daylight"
-                    - light.turn_off: daylight
+                    - light.turn_off: light_daylight
         - arc:
             id: ui_daylight_brightness
             flex_grow: true
@@ -29,5 +29,5 @@ widgets:
             max_value: 100
             on_change:
               - light.turn_on:
-                  id: daylight
+                  id: light_daylight
                   brightness: !lambda return int(x) / 100.f;
