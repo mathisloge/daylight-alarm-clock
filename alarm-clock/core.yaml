@@ -121,12 +121,14 @@ switch:
           state:
             checked: true
       - lvgl.widget.enable: alarm_time_text
+
     on_turn_off:
       - lvgl.widget.update:
           id: ui_alarm_settings_alarm_active
           state:
             checked: false
       - lvgl.widget.disable: alarm_time_text
+      - speaker_media_player.play_local_media_file: alarm_music
 
   # true or false whether the alarm behavior should play
   - platform: template
@@ -136,8 +138,10 @@ switch:
     restore_mode: ALWAYS_OFF
     on_turn_on:
       - script.execute: show_alarm_page
+      - script.execute: play_alarm_music
     on_turn_off:
       - script.execute: hide_alarm_page
+      - script.stop: play_alarm_music
     optimistic: true
 
   - platform: template
@@ -224,6 +228,7 @@ script:
           then:
             - logger.log: "Turn on alarm"
             - switch.turn_on: alarm_ringing
+            - script.execute: resume_lvgl
             - delay: !lambda "return id(max_alarm_time_in_minutes).state * 60.0 * 1000.0;"
             - script.execute: turn_off_alarm
           else:
@@ -233,6 +238,7 @@ script:
     then:
       - script.stop: turn_on_alarm
       - switch.turn_off: alarm_ringing
+      - media_player.stop
 
   - id: do_snooze
     mode: single
@@ -246,3 +252,30 @@ script:
             - delay: !lambda "return id(snooze_time_in_minutes).state * 60.0 * 1000.0;"
             - logger.log: "Snooze finished. Trigger alarm again"
             - script.execute: turn_on_alarm
+
+  - id: play_alarm_music
+    mode: single
+    then:
+      - media_player.volume_set: 30%
+      - while:
+          condition:
+            switch.is_on: alarm_ringing
+          then:
+            - logger.log: "Play alarm music"
+            - speaker_media_player.play_local_media_file: alarm_music
+            - wait_until:
+                media_player.is_playing
+            - wait_until:
+                media_player.is_idle
+            - media_player.volume_up
+
+  - id: resume_lvgl
+    mode: single
+    then:
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - logger.log: "LVGL resuming"
+            - lvgl.resume:
+            - lvgl.widget.redraw:
+            - light.turn_on: display_backlight

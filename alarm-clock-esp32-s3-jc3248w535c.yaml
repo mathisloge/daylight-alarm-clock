@@ -41,10 +41,13 @@ speaker:
 
 media_player:
   - platform: speaker
-    id: media_player_main
+    id: speaker_media_player
     name: "Media Player"
     speaker: speaker_main
     sample_rate: 48000
+    files:
+      - id: alarm_music
+        file: alarm-clock/music/alarm-music.flac
 
 external_components:
   - source: github://pr#7672
@@ -107,13 +110,7 @@ touchscreen:
       swap_xy: true
       mirror_x: true
     on_release:
-      - if:
-          condition: lvgl.is_paused
-          then:
-            - logger.log: "LVGL resuming"
-            - lvgl.resume:
-            - lvgl.widget.redraw:
-            - light.turn_on: display_backlight
+      - script.execute: resume_lvgl
 
 packages:
   core: !include alarm-clock/core.yaml
