@@ -47,7 +47,8 @@ time:
 datetime:
   - platform: template
     id: next_alarm_datetime
-    name: "Next alarm"
+    name: "Alarm time"
+    entity_category: config
     time_id: global_time
     optimistic: true
     restore_value: true
@@ -92,6 +93,7 @@ datetime:
   - platform: template
     id: daytime_start_datetime
     name: "Daytime start timepoint"
+    entity_category: diagnostic
     restore_value: true
     optimistic: true
     type: time
@@ -133,9 +135,9 @@ switch:
   # true or false whether the alarm behavior should play
   - platform: template
     id: alarm_ringing
-    name: "DBG Alarm ringing"
-    internal: false
+    name: "Alarm ringing"
     restore_mode: ALWAYS_OFF
+    entity_category: diagnostic
     on_turn_on:
       - script.execute: show_alarm_page
       - script.execute: play_alarm_music
@@ -149,7 +151,7 @@ switch:
     id: switch_antiburn
     icon: mdi:television-shimmer
     optimistic: true
-    entity_category: "config"
+    entity_category: diagnostic
     turn_on_action:
       - logger.log: "Starting Antiburn"
       - if:
@@ -175,6 +177,7 @@ number:
   - platform: template
     id: snooze_time_in_minutes
     name: "Snooze Time in Minutes"
+    entity_category: config
     mode: box
     initial_value: 10
     min_value: 0.1
@@ -186,6 +189,7 @@ number:
   - platform: template
     id: max_alarm_time_in_minutes
     name: "Max Alarm Time in Minutes"
+    entity_category: config
     mode: box
     initial_value: 5
     min_value: 0.1
@@ -197,6 +201,7 @@ number:
   - platform: template
     id: minutes_daytime_effect
     name: "Minutes for daytime effect"
+    entity_category: config
     mode: box
     initial_value: 30
     min_value: 0
@@ -207,6 +212,7 @@ number:
 
   - platform: template
     name: "Screen timeout"
+    entity_category: config
     optimistic: true
     id: display_timeout
     unit_of_measurement: "s"
