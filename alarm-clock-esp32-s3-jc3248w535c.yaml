@@ -112,6 +112,18 @@ touchscreen:
     on_release:
       - script.execute: resume_lvgl
 
+sensor:
+  - platform: adc
+    pin: GPIO5
+    name: "Illuminance"
+    device_class: illuminance
+    unit_of_measurement: lx
+    update_interval: 1s
+    attenuation: auto
+    filters:
+      - lambda: |-
+          return (x / 10000.0) * 2000000.0;
+
 packages:
   core: !include alarm-clock/core.yaml
   hardware: !include alarm-clock/hardware_core.yaml
